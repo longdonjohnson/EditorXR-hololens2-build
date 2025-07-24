@@ -13,40 +13,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.1
-
-      - name: Add msbuild to path
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Nuget restore
-        run: nuget restore -NonInteractive
-
       - name: Build Unity Project
-        uses: microsoft/unity-builder@v1
+        uses: game-ci/unity-builder@v2
         with:
           projectPath: .
           unityVersion: 2019.1.14f1
           targetPlatform: Universal Windows Platform
           buildTarget: WSAPlayer
-          customParameters: -buildTarget ARM64
 
-      - name: Sign the MSIX package
-        run: |
-          $pfxPath = "signing-certificate.pfx"
-          $password = "${{ secrets.SIGNING_CERT_PASSWORD }}"
-          $msixPath = "build/HoloLens2Build/HoloLens2Build.msix"
-
-          # Import the certificate
-          $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
-          $cert.Import($pfxPath, $password, "Exportable")
-
-          # Sign the package
-          Sign-AppxPackage -FilePath $msixPath -Certificate $cert
-        shell: pwsh
+      - name: List build files
+        run: ls -R build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: HoloLens2-Build
-          path: build/HoloLens2Build/HoloLens2Build.msix
+          path: build
