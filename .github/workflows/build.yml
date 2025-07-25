@@ -19,7 +19,8 @@ jobs:
           projectPath: .
           unityVersion: 2019.1.14f1
           targetPlatform: Universal Windows Platform
-          buildTarget: WSAPlayer
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
       - name: List build files
         run: ls -R build
