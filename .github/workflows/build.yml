@@ -13,19 +13,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Unity Project
-        uses: game-ci/unity-builder@v2
-        with:
-          projectPath: .
-          unityVersion: 2019.1.14f1
-          targetPlatform: Universal Windows Platform
-          buildTarget: WSAPlayer
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
 
-      - name: List build files
-        run: ls -R build
+      - name: Setup NuGet
+        uses: microsoft/setup-nuget@v1
+
+      - name: Nuget restore
+        run: nuget restore -NonInteractive
+
+      - name: Build solution
+        run: msbuild /p:Configuration=Release /p:Platform=x64
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: HoloLens2-Build
-          path: build
+          path: bin/x64/Release
